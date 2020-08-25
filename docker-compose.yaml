@@ -1,0 +1,45 @@
+
+version: '3.4'
+
+services:
+  postgres:
+    build: ./postgres
+    restart: "always"
+    ports:
+      - "5434:5434"
+    environment:
+      POSTGRES_DB: "web"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "1234"
+  lines-provider:
+    image: antonboom/lines-provider
+    depends_on:
+      - "postgres"
+  kiddy_line:
+    build: ./
+    restart: "always"
+    ports:
+      - '8088:8088'
+    volumes:
+      - ./:/app
+    depends_on:
+      - "lines-provider"
+  server:
+    build:
+      context: ./
+      dockerfile: ./cmd/grpcserver/server/Dockerfile
+    restart: "always"
+    ports:
+      - '55555:55555'
+    depends_on:
+      - "kiddy_line"
+  client:
+    build:
+      context: ./
+      dockerfile: ./cmd/grpcserver/client/Dockerfile
+    restart: "always"
+    depends_on:
+      - "server"
+
+
+

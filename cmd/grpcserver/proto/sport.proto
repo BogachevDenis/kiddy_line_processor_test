@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package protobuf;
+option go_package = "github.com/protocolbuffers/protobuf/examples/go/tutorialpb";
+service Sport {
+rpc SubscribeOnSportsLines (stream Request) returns (stream Response) {}
+}
+
+message Request {
+repeated string x = 1;
+int32 y = 2;
+}
+
+message Response {
+repeated string xresult = 1;
+map<string, float> result = 2;
+}
+
+
